@@ -1,0 +1,9 @@
+import SwiftUI
+
+@main
+struct BookKeepingApp: App {
+    @StateObject private var session = SessionStore()
+    var body: some Scene {
+        WindowGroup { RootView().environmentObject(session) }
+    }
+}

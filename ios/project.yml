@@ -1,0 +1,19 @@
+name: BookKeeping
+options:
+  deploymentTarget:
+    iOS: "26.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+targets:
+  BookKeeping:
+    type: application
+    platform: iOS
+    sources:
+      - path: BookKeeping
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.pixelledger
+        INFOPLIST_FILE: BookKeeping/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        TARGETED_DEVICE_FAMILY: "1"
