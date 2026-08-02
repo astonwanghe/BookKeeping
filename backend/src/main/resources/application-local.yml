@@ -1,0 +1,12 @@
+# IDEA uses this profile for local debugging. Spring Boot starts compose.dev.yaml,
+# discovers its MySQL and Redis connection details, and imports local-only secrets.
+spring:
+  config:
+    import: optional:file:.env.test[.properties]
+  docker:
+    compose:
+      file: compose.dev.yaml
+      lifecycle-management: start-only
+      arguments:
+        - --env-file=.env.test
+        - --project-name=pixel-ledger-test
