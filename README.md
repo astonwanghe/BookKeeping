@@ -9,7 +9,7 @@ Private, two-user bookkeeping app with a SwiftUI iOS client and a self-hosted Sp
 
 ## Local backend
 
-1. Copy `backend/.env.example` to `backend/.env` and replace all placeholder secrets.
+1. Copy `backend/.env.example` to `backend/.env` and replace all placeholder secrets, including `REDIS_PASSWORD`.
 2. Run `docker compose --env-file .env up --build` from `backend/`.
 3. Create the two allowed accounts with `API_URL=http://localhost:8080 ADMIN_KEY='…' sh scripts/provision-user.sh 手机号 初始密码`. The endpoint is protected by `X-Admin-Key`; remove that environment variable after onboarding.
 
@@ -17,4 +17,4 @@ The first startup runs Flyway migrations automatically. Do not edit an already-a
 
 ## Production
 
-Put the API behind a TLS reverse proxy, keep MySQL/Redis on the private Docker network, configure a real SMTP account, and back up the MySQL volume daily before exposing the API to iOS devices.
+Put the API behind a TLS reverse proxy, keep MySQL/Redis on the private Docker network, configure a real SMTP account, and back up the MySQL volume daily before exposing the API to iOS devices. Redis requires `REDIS_PASSWORD` and is intentionally not published to a host port.

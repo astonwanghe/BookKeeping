@@ -18,12 +18,22 @@ services:
 
   redis:
     image: redis:8-alpine
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
+    command: ["sh", "-c", "exec redis-server --requirepass \"$$REDIS_PASSWORD\""]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
     networks: [private]
 
   api:
     build: .
     depends_on:
       mysql:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     env_file: .env
     environment:
