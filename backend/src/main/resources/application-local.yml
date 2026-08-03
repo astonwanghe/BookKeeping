@@ -2,4 +2,5 @@
 # with scripts/start-local-datastores.sh; Spring reads test-only values below.
 spring:
   config:
-    import: optional:file:backend/.env.test[.properties]
+    # IDEA 从仓库根目录启动，Maven 测试通常以 backend 为工作目录，因此兼容两种路径。
+    import: optional:file:backend/.env.test[.properties],optional:file:.env.test[.properties]

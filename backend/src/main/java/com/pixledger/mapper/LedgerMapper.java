@@ -69,10 +69,10 @@ public interface LedgerMapper {
     @Delete("DELETE FROM t_transaction WHERE id=#{id} AND user_id=#{userId}")
     int deleteTransaction(long userId, long id);
 
-    @Select("SELECT COALESCE(SUM(CASE WHEN type=INCOME THEN amount ELSE 0 END),0) AS income, COALESCE(SUM(CASE WHEN type=EXPENSE THEN amount ELSE 0 END),0) AS expense FROM t_transaction WHERE user_id=#{userId} AND occurred_on BETWEEN #{from} AND #{to}")
+    @Select("SELECT COALESCE(SUM(CASE WHEN type='INCOME' THEN amount ELSE 0 END),0) AS income, COALESCE(SUM(CASE WHEN type='EXPENSE' THEN amount ELSE 0 END),0) AS expense FROM t_transaction WHERE user_id=#{userId} AND occurred_on BETWEEN #{from} AND #{to}")
     SummaryDO summary(long userId, LocalDate from, LocalDate to);
 
-    @Select("SELECT c.name, c.icon, SUM(t.amount) AS amount FROM t_transaction t JOIN t_category c ON c.id=t.category_id WHERE t.user_id=#{userId} AND t.type=EXPENSE AND t.occurred_on BETWEEN #{from} AND #{to} GROUP BY c.id,c.name,c.icon ORDER BY amount DESC")
+    @Select("SELECT c.name, c.icon, SUM(t.amount) AS amount FROM t_transaction t JOIN t_category c ON c.id=t.category_id WHERE t.user_id=#{userId} AND t.type='EXPENSE' AND t.occurred_on BETWEEN #{from} AND #{to} GROUP BY c.id,c.name,c.icon ORDER BY amount DESC")
     List<ExpenseBreakdownDO> expenseBreakdown(long userId, LocalDate from, LocalDate to);
 
     @Select("SELECT id, user_id AS userId, category_id AS categoryId, month_start AS monthStart, amount FROM t_budget WHERE user_id=#{userId} AND month_start=#{monthStart} ORDER BY category_id")

@@ -9,7 +9,7 @@ spring:
     locations: classpath:db/migration
   mail:
     host: ${SMTP_HOST:}
-    port: ${SMTP_PORT:587}
+    port: ${SMTP_PORT:25}
     username: ${SMTP_USERNAME:}
     password: ${SMTP_PASSWORD:}
     properties.mail.smtp.auth: true

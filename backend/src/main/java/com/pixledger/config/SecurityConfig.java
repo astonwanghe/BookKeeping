@@ -25,6 +25,11 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain security(HttpSecurity http, JwtFilter jwtFilter, AuthRateLimitFilter rateLimitFilter) throws Exception {
         return http.csrf(csrf -> csrf.disable()).sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(e -> e.authenticationEntryPoint((request, response, exception) -> {
+                    response.setStatus(401);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write("{\"error\":\"未认证\"}");
+                }))
                 .authorizeHttpRequests(a -> a.requestMatchers("/actuator/health", "/auth/**").permitAll().anyRequest().authenticated())
                 .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
