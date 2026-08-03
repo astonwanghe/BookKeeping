@@ -1,4 +1,4 @@
-name: BookKeeping
+name: PixelLedger
 options:
   deploymentTarget:
     iOS: "26.0"
@@ -6,14 +6,14 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
 targets:
-  BookKeeping:
+  PixelLedger:
     type: application
     platform: iOS
     sources:
-      - path: BookKeeping
+      - path: PixelLedger
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.pixelledger
-        INFOPLIST_FILE: BookKeeping/Info.plist
+        INFOPLIST_FILE: PixelLedger/Info.plist
         GENERATE_INFOPLIST_FILE: NO
         TARGETED_DEVICE_FAMILY: "1"

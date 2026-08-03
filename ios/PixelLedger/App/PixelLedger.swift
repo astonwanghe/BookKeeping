@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct BookKeepingApp: App {
+struct PixelLedger: App {
     @StateObject private var session = SessionStore()
     var body: some Scene {
         WindowGroup { RootView().environmentObject(session) }
