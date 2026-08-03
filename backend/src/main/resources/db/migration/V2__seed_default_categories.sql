@@ -1,4 +1,4 @@
-INSERT INTO categories (user_id, name, type, icon, sort_order) VALUES
+INSERT INTO t_category (user_id, name, type, icon, sort_order) VALUES
   (NULL, '餐饮', 'EXPENSE', 'fork.knife', 10),
   (NULL, '购物', 'EXPENSE', 'bag', 20),
   (NULL, '交通', 'EXPENSE', 'car', 30),
