@@ -13,7 +13,6 @@ Private, two-user bookkeeping app with a SwiftUI iOS client and a self-hosted Sp
 2. Fill in test-only values in `backend/.env.test`.
 3. Start MySQL and Redis once: `cd backend && ./scripts/start-local-datastores.sh`.
 4. In IDEA, run `PixelLedgerApplication` directly with working directory set to the repository root and active profile `local` (or use `--spring.profiles.active=local`). The API connects to data containers at `127.0.0.1`; Docker Compose is not used.
-5. Create test users once with `API_URL=http://localhost:8080 ADMIN_KEY='…' sh scripts/provision-user.sh 手机号 初始密码`.
 
 Flyway runs schema migrations when the API starts. Do not edit an already-applied migration; add a new `V<n>__description.sql` file instead.
 

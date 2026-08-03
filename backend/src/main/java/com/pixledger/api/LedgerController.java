@@ -1,12 +1,12 @@
 package com.pixledger.api;
 
+import com.pixledger.domain.*;
+import com.pixledger.dto.ledger.LedgerDtos.*;
 import com.pixledger.mapper.LedgerMapper;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.*;
-
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -15,128 +15,89 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class LedgerController {
     private final LedgerMapper mapper;
-
-    public LedgerController(LedgerMapper mapper) {
-        this.mapper = mapper;
-    }
-
-    record Category(String name, String type, String icon, Integer sortOrder, Boolean active) {
-    }
-
-    record Transaction(Long categoryId, BigDecimal amount, LocalDate occurredOn, String note) {
-    }
-
-    record Budget(Long categoryId, BigDecimal amount) {
-    }
-
-    private long user(Authentication a) {
-        return (Long) a.getPrincipal();
-    }
-
-    private void validAmount(BigDecimal amount) {
-        if (amount == null || amount.signum() <= 0 || amount.scale() > 2)
-            throw new IllegalArgumentException("金额必须为最多两位小数的正数");
-    }
-
-    private LocalDate start(String month) {
-        try {
-            return YearMonth.parse(month).atDay(1);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("月份格式应为 YYYY-MM");
-        }
-    }
+    public LedgerController(LedgerMapper mapper) { this.mapper = mapper; }
 
     @GetMapping("/categories")
-    List<Map<String, Object>> categories(Authentication a) {
-        return mapper.categories(user(a));
+    List<CategoryResponse> categories(Authentication authentication) {
+        return mapper.categories(user(authentication)).stream().map(this::categoryResponse).toList();
     }
 
     @PostMapping("/categories")
     @ResponseStatus(HttpStatus.CREATED)
-    Map<String, Object> addCategory(Authentication a, @RequestBody Category in) {
-        if (in.name() == null || in.name().isBlank() || !("INCOME".equals(in.type()) || "EXPENSE".equals(in.type())))
-            throw new IllegalArgumentException("分类信息不正确");
-        var c = new HashMap<String, Object>();
-        c.put("userId", user(a));
-        c.put("name", in.name().trim());
-        c.put("type", in.type());
-        c.put("icon", Optional.ofNullable(in.icon()).orElse("square.grid.2x2"));
-        c.put("sortOrder", Optional.ofNullable(in.sortOrder()).orElse(999));
-        mapper.createCategory(c);
-        return c;
+    CategoryResponse addCategory(Authentication authentication, @RequestBody CategoryRequest input) {
+        validateCategory(input);
+        CategoryDO category = new CategoryDO();
+        category.setUserId(user(authentication)); category.setName(input.name().trim()); category.setType(input.type());
+        category.setIcon(input.icon() == null ? "square.grid.2x2" : input.icon());
+        category.setSortOrder(input.sortOrder() == null ? 999 : input.sortOrder()); category.setActive(true);
+        mapper.createCategory(category);
+        return categoryResponse(category);
     }
 
     @PutMapping("/categories/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void editCategory(Authentication a, @PathVariable long id, @RequestBody Category in) {
-        var c = new HashMap<String, Object>();
-        c.put("id", id);
-        c.put("userId", user(a));
-        c.put("name", in.name());
-        c.put("icon", in.icon());
-        c.put("sortOrder", in.sortOrder());
-        c.put("active", in.active());
-        if (mapper.updateCategory(c) == 0) throw new IllegalArgumentException("分类不存在或不可修改");
+    void editCategory(Authentication authentication, @PathVariable long id, @RequestBody CategoryRequest input) {
+        validateCategory(input);
+        CategoryDO category = new CategoryDO();
+        category.setId(id); category.setUserId(user(authentication)); category.setName(input.name().trim());
+        category.setIcon(input.icon() == null ? "square.grid.2x2" : input.icon());
+        category.setSortOrder(input.sortOrder() == null ? 999 : input.sortOrder());
+        category.setActive(input.active() == null || input.active());
+        if (mapper.updateCategory(category) == 0) throw new IllegalArgumentException("分类不存在或不可修改");
     }
 
     @GetMapping("/transactions")
-    List<Map<String, Object>> list(Authentication a, @RequestParam String month) {
-        var s = start(month);
-        return mapper.transactions(user(a), s, s.plusMonths(1).minusDays(1));
+    List<TransactionResponse> list(Authentication authentication, @RequestParam String month) {
+        LocalDate start = start(month);
+        return mapper.transactions(user(authentication), start, start.plusMonths(1).minusDays(1)).stream().map(this::transactionResponse).toList();
     }
 
     @PostMapping("/transactions")
     @ResponseStatus(HttpStatus.CREATED)
-    Map<String, Object> add(Authentication a, @RequestBody Transaction in) {
-        return save(a, null, in);
-    }
+    TransactionResponse add(Authentication authentication, @RequestBody TransactionRequest input) { return save(authentication, null, input); }
 
     @PutMapping("/transactions/{id}")
-    Map<String, Object> edit(Authentication a, @PathVariable long id, @RequestBody Transaction in) {
-        return save(a, id, in);
-    }
+    TransactionResponse edit(Authentication authentication, @PathVariable long id, @RequestBody TransactionRequest input) { return save(authentication, id, input); }
 
     @DeleteMapping("/transactions/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void delete(Authentication a, @PathVariable long id) {
-        if (mapper.deleteTransaction(user(a), id) == 0) throw new IllegalArgumentException("流水不存在");
-    }
-
-    private Map<String, Object> save(Authentication a, Long id, Transaction in) {
-        long uid = user(a);
-        validAmount(in.amount());
-        var category = mapper.ownedCategory(uid, in.categoryId());
-        if (category == null) throw new IllegalArgumentException("分类不可用");
-        var tx = new HashMap<String, Object>();
-        tx.put("id", id);
-        tx.put("userId", uid);
-        tx.put("categoryId", in.categoryId());
-        tx.put("type", category.get("type"));
-        tx.put("amount", in.amount());
-        tx.put("occurredOn", Optional.ofNullable(in.occurredOn()).orElse(LocalDate.now()));
-        tx.put("note", in.note());
-        if (id == null) mapper.createTransaction(tx);
-        else if (mapper.updateTransaction(tx) == 0) throw new IllegalArgumentException("流水不存在");
-        return tx;
+    void delete(Authentication authentication, @PathVariable long id) {
+        if (mapper.deleteTransaction(user(authentication), id) == 0) throw new IllegalArgumentException("流水不存在");
     }
 
     @GetMapping("/dashboard")
-    Map<String, Object> dashboard(Authentication a, @RequestParam String month) {
-        var s = start(month);
-        var e = s.plusMonths(1).minusDays(1);
-        var totals = mapper.summary(user(a), s, e);
-        return Map.of("month", month, "income", totals.get("income"), "expense", totals.get("expense"), "balance", totals.get("income").subtract(totals.get("expense")), "expenseBreakdown", mapper.expenseBreakdown(user(a), s, e), "budgets", mapper.budgets(user(a), s));
+    DashboardResponse dashboard(Authentication authentication, @RequestParam String month) {
+        LocalDate start = start(month); LocalDate end = start.plusMonths(1).minusDays(1); long userId = user(authentication);
+        SummaryDO summary = mapper.summary(userId, start, end);
+        List<ExpenseBreakdownResponse> breakdown = mapper.expenseBreakdown(userId, start, end).stream().map(item -> new ExpenseBreakdownResponse(item.getName(), item.getIcon(), item.getAmount())).toList();
+        List<BudgetResponse> budgets = mapper.budgets(userId, start).stream().map(item -> new BudgetResponse(item.getId(), item.getCategoryId(), item.getAmount())).toList();
+        return new DashboardResponse(month, summary.getIncome(), summary.getExpense(), summary.getIncome().subtract(summary.getExpense()), breakdown, budgets);
     }
 
     @PutMapping("/budgets/{month}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void budget(Authentication a, @PathVariable String month, @RequestBody Budget in) {
-        validAmount(in.amount());
-        var b = new HashMap<String, Object>();
-        b.put("userId", user(a));
-        b.put("monthStart", start(month));
-        b.put("categoryId", in.categoryId());
-        b.put("amount", in.amount());
-        mapper.upsertBudget(b);
+    void budget(Authentication authentication, @PathVariable String month, @RequestBody BudgetRequest input) {
+        validAmount(input.amount());
+        BudgetDO budget = new BudgetDO(); budget.setUserId(user(authentication)); budget.setMonthStart(start(month)); budget.setCategoryId(input.categoryId()); budget.setAmount(input.amount());
+        mapper.upsertBudget(budget);
     }
+
+    private TransactionResponse save(Authentication authentication, Long id, TransactionRequest input) {
+        validAmount(input.amount());
+        if (input.categoryId() == null) throw new IllegalArgumentException("请选择分类");
+        long userId = user(authentication); CategoryDO category = mapper.ownedCategory(userId, input.categoryId());
+        if (category == null) throw new IllegalArgumentException("分类不可用");
+        TransactionDO transaction = new TransactionDO(); transaction.setId(id); transaction.setUserId(userId); transaction.setCategoryId(input.categoryId()); transaction.setType(category.getType());
+        transaction.setAmount(input.amount()); transaction.setOccurredOn(input.occurredOn() == null ? LocalDate.now() : input.occurredOn()); transaction.setNote(input.note());
+        transaction.setCategoryName(category.getName()); transaction.setCategoryIcon(category.getIcon());
+        if (id == null) mapper.createTransaction(transaction); else if (mapper.updateTransaction(transaction) == 0) throw new IllegalArgumentException("流水不存在");
+        return transactionResponse(transaction);
+    }
+
+    private long user(Authentication authentication) { return (Long) authentication.getPrincipal(); }
+    private void validAmount(BigDecimal amount) { if (amount == null || amount.signum() <= 0 || amount.scale() > 2) throw new IllegalArgumentException("金额必须为最多两位小数的正数"); }
+    private LocalDate start(String month) { try { return YearMonth.parse(month).atDay(1); } catch (Exception exception) { throw new IllegalArgumentException("月份格式应为 YYYY-MM"); } }
+    private void validateCategory(CategoryRequest input) { if (input.name() == null || input.name().isBlank() || !("INCOME".equals(input.type()) || "EXPENSE".equals(input.type()))) throw new IllegalArgumentException("分类信息不正确"); }
+    private CategoryResponse categoryResponse(CategoryDO category) { return new CategoryResponse(category.getId(), category.getUserId(), category.getName(), category.getType(), category.getIcon(), category.getSortOrder(), Boolean.TRUE.equals(category.getActive())); }
+    private TransactionResponse transactionResponse(TransactionDO transaction) { return new TransactionResponse(transaction.getId(), transaction.getUserId(), transaction.getType(), transaction.getAmount(), transaction.getOccurredOn(), transaction.getNote(), transaction.getCategoryId(), transaction.getCategoryName(), transaction.getCategoryIcon()); }
 }

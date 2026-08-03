@@ -25,7 +25,7 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain security(HttpSecurity http, JwtFilter jwtFilter, AuthRateLimitFilter rateLimitFilter) throws Exception {
         return http.csrf(csrf -> csrf.disable()).sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(a -> a.requestMatchers("/actuator/health", "/auth/**", "/admin/users").permitAll().anyRequest().authenticated())
+                .authorizeHttpRequests(a -> a.requestMatchers("/actuator/health", "/auth/**").permitAll().anyRequest().authenticated())
                 .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 }
