@@ -2,6 +2,14 @@
 
 Pixel Ledger（像素账本）是一个仅供两人使用的私有记账系统，由 SwiftUI iOS 客户端和自建 Spring Boot API 组成。项目不面向 App Store 或公开用户，不提供注册、共享账本、资金账户、转账、报销和资产负债等功能。
 
+## 界面预览
+
+以下为 APP 开发过程中的界面截图：
+
+<p align="center">
+  <img src="docs/screenshots/home.png" width="320" alt="首页" />
+</p>
+
 ## 技术栈
 
 - iOS：SwiftUI、Swift 6、XcodeGen
