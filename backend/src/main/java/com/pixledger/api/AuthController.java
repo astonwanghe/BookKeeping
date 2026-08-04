@@ -9,54 +9,116 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     AuthService authService;
 
     @PostMapping("/login")
     SessionResponse login(@RequestBody LoginRequest input) {
-        return sessionResponse(authService.login(input.phone(), input.password()));
+        long started = System.nanoTime();
+        try {
+            AuthSession session = authService.login(input.phone(), input.password());
+            log.info("auth.login success phone={} userId={} elapsedMs={}",
+                    maskPhone(input.phone()), session.user().getId(), elapsedMs(started));
+            return sessionResponse(session);
+        } catch (RuntimeException exception) {
+            log.warn("auth.login failed phone={} reason={} elapsedMs={}",
+                    maskPhone(input.phone()), exception.getMessage(), elapsedMs(started));
+            throw exception;
+        }
     }
 
     @PostMapping("/refresh")
     SessionResponse refresh(@RequestBody RefreshTokenRequest input) {
-        return sessionResponse(authService.refresh(input.refreshToken()));
+        long started = System.nanoTime();
+        try {
+            AuthSession session = authService.refresh(input.refreshToken());
+            log.info("auth.refresh success userId={} elapsedMs={}", session.user().getId(), elapsedMs(started));
+            return sessionResponse(session);
+        } catch (RuntimeException exception) {
+            log.warn("auth.refresh failed reason={} elapsedMs={}", exception.getMessage(), elapsedMs(started));
+            throw exception;
+        }
     }
 
     @PostMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void logout(@RequestBody RefreshTokenRequest input) {
-        authService.logout(input.refreshToken());
+        long started = System.nanoTime();
+        try {
+            authService.logout(input.refreshToken());
+            log.info("auth.logout success elapsedMs={}", elapsedMs(started));
+        } catch (RuntimeException exception) {
+            log.warn("auth.logout failed reason={} elapsedMs={}", exception.getMessage(), elapsedMs(started));
+            throw exception;
+        }
     }
 
     @PostMapping("/email")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void bindEmail(Authentication auth, @RequestBody EmailRequest input) {
-        validateEmail(input.email());
-        authService.bindEmail(userId(auth), input.email());
+        long userId = userId(auth);
+        long started = System.nanoTime();
+        try {
+            validateEmail(input.email());
+            authService.bindEmail(userId, input.email());
+            log.info("auth.bind-email success userId={} elapsedMs={}", userId, elapsedMs(started));
+        } catch (RuntimeException exception) {
+            log.warn("auth.bind-email failed userId={} reason={} elapsedMs={}",
+                    userId, exception.getMessage(), elapsedMs(started));
+            throw exception;
+        }
     }
 
     @GetMapping("/verify-email")
     MessageResponse verify(@RequestParam String token) {
-        authService.verifyEmail(token);
-        return new MessageResponse("邮箱验证成功");
+        long started = System.nanoTime();
+        try {
+            authService.verifyEmail(token);
+            log.info("auth.verify-email success elapsedMs={}", elapsedMs(started));
+            return new MessageResponse("邮箱验证成功");
+        } catch (RuntimeException exception) {
+            log.warn("auth.verify-email failed reason={} elapsedMs={}",
+                    exception.getMessage(), elapsedMs(started));
+            throw exception;
+        }
     }
 
     @PostMapping("/forgot-password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void forgot(@RequestBody EmailRequest input) {
-        authService.forgotPassword(input.email());
+        long started = System.nanoTime();
+        try {
+            authService.forgotPassword(input.email());
+            log.info("auth.forgot-password requested elapsedMs={}", elapsedMs(started));
+        } catch (RuntimeException exception) {
+            log.warn("auth.forgot-password failed reason={} elapsedMs={}",
+                    exception.getMessage(), elapsedMs(started));
+            throw exception;
+        }
     }
 
     @PostMapping("/reset-password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void reset(@RequestBody ResetPasswordRequest input) {
-        validatePassword(input.password());
-        authService.resetPassword(input.token(), input.password());
+        long started = System.nanoTime();
+        try {
+            validatePassword(input.password());
+            authService.resetPassword(input.token(), input.password());
+            log.info("auth.reset-password success elapsedMs={}", elapsedMs(started));
+        } catch (RuntimeException exception) {
+            log.warn("auth.reset-password failed reason={} elapsedMs={}",
+                    exception.getMessage(), elapsedMs(started));
+            throw exception;
+        }
     }
 
     @GetMapping(value = "/reset-password", produces = MediaType.TEXT_HTML_VALUE)
@@ -73,8 +135,17 @@ public class AuthController {
     @PostMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void change(Authentication auth, @RequestBody PasswordRequest input) {
-        validatePassword(input.password());
-        authService.changePassword(userId(auth), input.password());
+        long userId = userId(auth);
+        long started = System.nanoTime();
+        try {
+            validatePassword(input.password());
+            authService.changePassword(userId, input.password());
+            log.info("auth.change-password success userId={} elapsedMs={}", userId, elapsedMs(started));
+        } catch (RuntimeException exception) {
+            log.warn("auth.change-password failed userId={} reason={} elapsedMs={}",
+                    userId, exception.getMessage(), elapsedMs(started));
+            throw exception;
+        }
     }
 
     private SessionResponse sessionResponse(AuthSession session) {
@@ -94,6 +165,17 @@ public class AuthController {
 
     private long userId(Authentication authentication) {
         return (Long) authentication.getPrincipal();
+    }
+
+    private long elapsedMs(long started) {
+        return (System.nanoTime() - started) / 1_000_000;
+    }
+
+    private String maskPhone(String phone) {
+        if (phone == null || phone.length() <= 4) {
+            return "****";
+        }
+        return "*".repeat(phone.length() - 4) + phone.substring(phone.length() - 4);
     }
 
     private void validateEmail(String email) {

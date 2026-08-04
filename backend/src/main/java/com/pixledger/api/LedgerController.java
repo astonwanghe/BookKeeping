@@ -14,10 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api")
 public class LedgerController {
+
+    private static final Logger log = LoggerFactory.getLogger(LedgerController.class);
 
     @Autowired
     CategoryService categoryService;
@@ -28,9 +32,12 @@ public class LedgerController {
 
     @GetMapping("/categories")
     List<CategoryResponse> categories(Authentication authentication) {
-        return categoryService.list(userId(authentication)).stream()
+        long userId = userId(authentication);
+        List<CategoryResponse> result = categoryService.list(userId).stream()
                 .map(this::categoryResponse)
                 .toList();
+        log.info("ledger.categories.list success userId={} count={}", userId, result.size());
+        return result;
     }
 
     @PostMapping("/categories")
@@ -44,7 +51,9 @@ public class LedgerController {
         category.setIcon(input.icon() == null ? "square.grid.2x2" : input.icon());
         category.setSortOrder(input.sortOrder() == null ? 999 : input.sortOrder());
         category.setActive(true);
-        return categoryResponse(categoryService.create(category));
+        CategoryResponse result = categoryResponse(categoryService.create(category));
+        log.info("ledger.category.create success userId={} categoryId={}", category.getUserId(), result.id());
+        return result;
     }
 
     @PutMapping("/categories/{id}")
@@ -65,6 +74,7 @@ public class LedgerController {
         if (categoryService.update(category) == 0) {
             throw new IllegalArgumentException("分类不存在或不可修改");
         }
+        log.info("ledger.category.update success userId={} categoryId={}", category.getUserId(), id);
     }
 
     @GetMapping("/transactions")
@@ -72,10 +82,13 @@ public class LedgerController {
             Authentication authentication,
             @RequestParam String month
     ) {
+        long userId = userId(authentication);
         LocalDate from = monthStart(month);
-        return transactionService.list(userId(authentication), from, monthEnd(from)).stream()
+        List<TransactionResponse> result = transactionService.list(userId, from, monthEnd(from)).stream()
                 .map(this::transactionResponse)
                 .toList();
+        log.info("ledger.transactions.list success userId={} month={} count={}", userId, month, result.size());
+        return result;
     }
 
     @PostMapping("/transactions")
@@ -84,9 +97,12 @@ public class LedgerController {
             Authentication authentication,
             @RequestBody TransactionRequest input
     ) {
-        return transactionResponse(
-                transactionService.create(transaction(userId(authentication), null, input))
+        long userId = userId(authentication);
+        TransactionResponse result = transactionResponse(
+                transactionService.create(transaction(userId, null, input))
         );
+        log.info("ledger.transaction.create success userId={} transactionId={}", userId, result.id());
+        return result;
     }
 
     @PutMapping("/transactions/{id}")
@@ -95,19 +111,23 @@ public class LedgerController {
             @PathVariable long id,
             @RequestBody TransactionRequest input
     ) {
-        TransactionDO transaction = transaction(userId(authentication), id, input);
+        long userId = userId(authentication);
+        TransactionDO transaction = transaction(userId, id, input);
         if (transactionService.update(transaction) == 0) {
             throw new IllegalArgumentException("流水不存在");
         }
+        log.info("ledger.transaction.update success userId={} transactionId={}", userId, id);
         return transactionResponse(transaction);
     }
 
     @DeleteMapping("/transactions/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteTransaction(Authentication authentication, @PathVariable long id) {
-        if (transactionService.delete(userId(authentication), id) == 0) {
+        long userId = userId(authentication);
+        if (transactionService.delete(userId, id) == 0) {
             throw new IllegalArgumentException("流水不存在");
         }
+        log.info("ledger.transaction.delete success userId={} transactionId={}", userId, id);
     }
 
     @GetMapping("/dashboard")
@@ -126,7 +146,7 @@ public class LedgerController {
         List<BudgetResponse> budgetResponses = budgetService.list(userId, from).stream()
                 .map(item -> new BudgetResponse(item.getId(), item.getCategoryId(), item.getAmount()))
                 .toList();
-        return new DashboardResponse(
+        DashboardResponse result = new DashboardResponse(
                 month,
                 summary.getIncome(),
                 summary.getExpense(),
@@ -134,6 +154,9 @@ public class LedgerController {
                 breakdown,
                 budgetResponses
         );
+        log.info("ledger.dashboard success userId={} month={} breakdownCount={} budgetCount={}",
+                userId, month, breakdown.size(), budgetResponses.size());
+        return result;
     }
 
     @PutMapping("/budgets/{month}")
@@ -150,6 +173,8 @@ public class LedgerController {
         budget.setCategoryId(input.categoryId());
         budget.setAmount(input.amount());
         budgetService.upsert(budget);
+        log.info("ledger.budget.upsert success userId={} month={} categoryId={}",
+                budget.getUserId(), month, budget.getCategoryId());
     }
 
     private TransactionDO transaction(long userId, Long id, TransactionRequest input) {

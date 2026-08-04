@@ -9,11 +9,14 @@ import java.io.IOException;
 import java.time.Duration;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 public class AuthRateLimitFilter extends OncePerRequestFilter {
+    private static final Logger log = LoggerFactory.getLogger(AuthRateLimitFilter.class);
     private final StringRedisTemplate redis;
 
     public AuthRateLimitFilter(StringRedisTemplate redis) {
@@ -31,6 +34,8 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
         Long count = redis.opsForValue().increment(key);
         if (count != null && count == 1) redis.expire(key, Duration.ofMinutes(1));
         if (count != null && count > 10) {
+            log.warn("auth.rate-limit rejected method={} uri={} clientIp={} count={}",
+                    request.getMethod(), request.getRequestURI(), request.getRemoteAddr(), count);
             response.setStatus(429);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("{\"error\":\"操作过于频繁，请稍后再试\"}");

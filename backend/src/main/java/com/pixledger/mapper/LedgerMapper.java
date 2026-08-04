@@ -34,15 +34,6 @@ public interface LedgerMapper {
     @Update("UPDATE t_refresh_token SET revoked_at=NOW() WHERE id=#{id} AND revoked_at IS NULL")
     int revokeRefreshToken(long id);
 
-    @Insert("INSERT INTO t_one_time_token(user_id,purpose,token_hash,expires_at) VALUES(#{userId},#{purpose},#{hash},DATE_ADD(NOW(), INTERVAL 30 MINUTE))")
-    void createOneTimeToken(long userId, String purpose, String hash);
-
-    @Select("SELECT id, user_id AS userId FROM t_one_time_token WHERE token_hash=#{hash} AND purpose=#{purpose} AND used_at IS NULL AND expires_at>NOW()")
-    TokenDO validOneTimeToken(String hash, String purpose);
-
-    @Update("UPDATE t_one_time_token SET used_at=NOW() WHERE id=#{id} AND used_at IS NULL")
-    int consumeOneTimeToken(long id);
-
     @Select("SELECT id, user_id AS userId, name, type, icon, sort_order AS sortOrder, active FROM t_category WHERE (user_id IS NULL OR user_id=#{userId}) AND active=TRUE ORDER BY type, sort_order, id")
     List<CategoryDO> categories(long userId);
 

@@ -76,7 +76,10 @@ class ApiIntegrationTest {
         jdbc.update("DELETE FROM t_transaction WHERE user_id IN (?, ?)", USER_A_ID, USER_B_ID);
         jdbc.update("DELETE FROM t_budget WHERE user_id IN (?, ?)", USER_A_ID, USER_B_ID);
         jdbc.update("DELETE FROM t_refresh_token WHERE user_id IN (?, ?)", USER_A_ID, USER_B_ID);
-        jdbc.update("DELETE FROM t_one_time_token WHERE user_id IN (?, ?)", USER_A_ID, USER_B_ID);
+        var oneTimeTokenKeys = redis.keys("auth:one-time:*");
+        if (oneTimeTokenKeys != null && !oneTimeTokenKeys.isEmpty()) {
+            redis.delete(oneTimeTokenKeys);
+        }
         jdbc.update("DELETE FROM t_category WHERE user_id IN (?, ?)", USER_A_ID, USER_B_ID);
         jdbc.update("DELETE FROM t_user WHERE id IN (?, ?)", USER_A_ID, USER_B_ID);
         jdbc.update("""
@@ -225,9 +228,12 @@ class ApiIntegrationTest {
                 "{\"email\":\"user-a@pixel-ledger.test\"}");
         assertEquals(204, bind.status());
         String verificationToken = lastMailToken();
+        assertOneTimeTokenTtl();
 
         ApiResponse verify = request("GET", "/auth/verify-email?token=" + verificationToken, null, null);
         assertEquals(200, verify.status());
+        var remainingOneTimeTokenKeys = redis.keys("auth:one-time:*");
+        assertTrue(remainingOneTimeTokenKeys == null || remainingOneTimeTokenKeys.isEmpty());
         assertEquals(401, request("GET", "/auth/verify-email?token=" + verificationToken, null, null).status());
 
         ApiResponse forgot = request(
@@ -235,6 +241,7 @@ class ApiIntegrationTest {
                 "{\"email\":\"user-a@pixel-ledger.test\"}");
         assertEquals(204, forgot.status());
         String resetToken = lastMailToken();
+        assertOneTimeTokenTtl();
 
         ApiResponse reset = request(
                 "POST", "/auth/reset-password", null,
@@ -328,6 +335,15 @@ class ApiIntegrationTest {
         int tokenStart = text.lastIndexOf("token=");
         assertTrue(tokenStart >= 0, "邮件正文未包含 token");
         return text.substring(tokenStart + "token=".length()).trim();
+    }
+
+    /** 验证一次性令牌存入 Redis，并拥有不超过 30 分钟的 TTL。 */
+    private void assertOneTimeTokenTtl() {
+        var keys = redis.keys("auth:one-time:*");
+        assertNotNull(keys);
+        assertEquals(1, keys.size());
+        long ttl = redis.getExpire(keys.iterator().next());
+        assertTrue(ttl > 0 && ttl <= 30 * 60, "一次性令牌 TTL 不正确：" + ttl);
     }
 
     /** 将 HTTP 响应正文解析为 JSON。 */

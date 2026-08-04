@@ -7,9 +7,11 @@ import com.pixledger.mapper.LedgerMapper;
 import com.pixledger.security.JwtService;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.time.Duration;
 import java.util.HexFormat;
 import java.util.UUID;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,19 +23,24 @@ public class AuthService {
     private final JwtService jwt;
     private final JavaMailSender mail;
     private final AppProperties props;
+    private final StringRedisTemplate redis;
+
+    private static final Duration ONE_TIME_TOKEN_TTL = Duration.ofMinutes(30);
 
     public AuthService(
             LedgerMapper mapper,
             PasswordEncoder passwords,
             JwtService jwt,
             JavaMailSender mail,
-            AppProperties props
+            AppProperties props,
+            StringRedisTemplate redis
     ) {
         this.mapper = mapper;
         this.passwords = passwords;
         this.jwt = jwt;
         this.mail = mail;
         this.props = props;
+        this.redis = redis;
     }
 
     public AuthSession login(String phone, String password) {
@@ -106,7 +113,11 @@ public class AuthService {
 
     private void sendToken(long userId, String email, String purpose, String subject, String path) {
         String token = UUID.randomUUID() + "." + UUID.randomUUID();
-        mapper.createOneTimeToken(userId, purpose, hash(token));
+        redis.opsForValue().set(
+                oneTimeTokenKey(purpose, token),
+                Long.toString(userId),
+                ONE_TIME_TOKEN_TTL
+        );
         if (props.mailFrom() == null || props.mailFrom().isBlank()) {
             throw new IllegalArgumentException("邮件服务尚未配置");
         }
@@ -119,10 +130,18 @@ public class AuthService {
     }
 
     private long consume(String token, String purpose) {
-        TokenDO oneTimeToken = mapper.validOneTimeToken(hash(token), purpose);
-        if (oneTimeToken == null || mapper.consumeOneTimeToken(oneTimeToken.getId()) == 0) {
+        String value = redis.opsForValue().getAndDelete(oneTimeTokenKey(purpose, token));
+        if (value == null) {
             throw new SecurityException("链接无效或已过期");
         }
-        return oneTimeToken.getUserId();
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException exception) {
+            throw new SecurityException("链接无效或已过期");
+        }
+    }
+
+    private String oneTimeTokenKey(String purpose, String token) {
+        return "auth:one-time:" + purpose + ":" + hash(token);
     }
 }
