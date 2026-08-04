@@ -1,4 +1,7 @@
 name: PixelLedger
+configs:
+  Debug: debug
+  Release: release
 options:
   deploymentTarget:
     iOS: "26.0"
@@ -17,3 +20,8 @@ targets:
         INFOPLIST_FILE: PixelLedger/Info.plist
         GENERATE_INFOPLIST_FILE: NO
         TARGETED_DEVICE_FAMILY: "1"
+      configs:
+        Debug:
+          API_BASE_URL: http://127.0.0.1:8080
+        Release:
+          API_BASE_URL: https://api.example.com

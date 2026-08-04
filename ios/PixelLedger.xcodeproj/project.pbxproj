@@ -1,0 +1,350 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2615C0F6DBF7282FAE1B64DC /* LedgerViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A382C8EA68578E621822C8 /* LedgerViews.swift */; };
+		3210E6B43605699F22B50E81 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F4D5153650B01CE1537409 /* Keychain.swift */; };
+		76D7878F5DF444BBE2D85609 /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288F01640FA018F681A54995 /* SessionStore.swift */; };
+		923CC1939DC3A1151B840E0D /* LedgerModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDD55761D41AE069990DCBC /* LedgerModels.swift */; };
+		A0E35AC2412158AFA4EA523E /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05223771F5EC1EABC54A214E /* APIClient.swift */; };
+		A83D727D3B2445F417B9C242 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DED1F0BE542299400CAC7EB /* RootView.swift */; };
+		FACB4ACD5C12EAC5ABF52377 /* PixelLedger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67124EE9B594146E2E58F335 /* PixelLedger.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		05223771F5EC1EABC54A214E /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		05A382C8EA68578E621822C8 /* LedgerViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LedgerViews.swift; sourceTree = "<group>"; };
+		09F4D5153650B01CE1537409 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		218EBBCB42C4D0E8011E099B /* PixelLedger.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PixelLedger.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		288F01640FA018F681A54995 /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
+		3BC62469925B86088BE6F553 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		3EDD55761D41AE069990DCBC /* LedgerModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LedgerModels.swift; sourceTree = "<group>"; };
+		67124EE9B594146E2E58F335 /* PixelLedger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelLedger.swift; sourceTree = "<group>"; };
+		6DED1F0BE542299400CAC7EB /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		06500E3AF70703827B67145B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				05A382C8EA68578E621822C8 /* LedgerViews.swift */,
+				6DED1F0BE542299400CAC7EB /* RootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		1D1AF7E29B5DED87EBE2EE38 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				05223771F5EC1EABC54A214E /* APIClient.swift */,
+				09F4D5153650B01CE1537409 /* Keychain.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		310AE90C5D6B9489F6E3AAB4 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3EDD55761D41AE069990DCBC /* LedgerModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		3D3074B84E856B2A8D97C2EA /* PixelLedger */ = {
+			isa = PBXGroup;
+			children = (
+				3BC62469925B86088BE6F553 /* Info.plist */,
+				9F3743197854458426CFBB34 /* App */,
+				310AE90C5D6B9489F6E3AAB4 /* Models */,
+				1D1AF7E29B5DED87EBE2EE38 /* Services */,
+				F5F3BEDCB23BB8AC806983AF /* State */,
+				06500E3AF70703827B67145B /* Views */,
+			);
+			path = PixelLedger;
+			sourceTree = "<group>";
+		};
+		87409412241988DA7A9AC8A4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				218EBBCB42C4D0E8011E099B /* PixelLedger.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9A14A4CB6D79593B2DD6E727 = {
+			isa = PBXGroup;
+			children = (
+				3D3074B84E856B2A8D97C2EA /* PixelLedger */,
+				87409412241988DA7A9AC8A4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9F3743197854458426CFBB34 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				67124EE9B594146E2E58F335 /* PixelLedger.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		F5F3BEDCB23BB8AC806983AF /* State */ = {
+			isa = PBXGroup;
+			children = (
+				288F01640FA018F681A54995 /* SessionStore.swift */,
+			);
+			path = State;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6798BFB0CB1AD2DEC2C5DBD8 /* PixelLedger */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AE31DAFE881105ED10DD6758 /* Build configuration list for PBXNativeTarget "PixelLedger" */;
+			buildPhases = (
+				789923AD9EE2F73E2CD917A0 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PixelLedger;
+			packageProductDependencies = (
+			);
+			productName = PixelLedger;
+			productReference = 218EBBCB42C4D0E8011E099B /* PixelLedger.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3B1D6B4340E4BE801443B570 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = AFF4C57199F15A3478DE9226 /* Build configuration list for PBXProject "PixelLedger" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 9A14A4CB6D79593B2DD6E727;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 87409412241988DA7A9AC8A4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6798BFB0CB1AD2DEC2C5DBD8 /* PixelLedger */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		789923AD9EE2F73E2CD917A0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0E35AC2412158AFA4EA523E /* APIClient.swift in Sources */,
+				3210E6B43605699F22B50E81 /* Keychain.swift in Sources */,
+				923CC1939DC3A1151B840E0D /* LedgerModels.swift in Sources */,
+				2615C0F6DBF7282FAE1B64DC /* LedgerViews.swift in Sources */,
+				FACB4ACD5C12EAC5ABF52377 /* PixelLedger.swift in Sources */,
+				A83D727D3B2445F417B9C242 /* RootView.swift in Sources */,
+				76D7878F5DF444BBE2D85609 /* SessionStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		337210F08A579A9C578591E1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				API_BASE_URL = "https://api.example.com";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PixelLedger/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.pixelledger;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		749832A5D1D674E247019304 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		B1CC6A908B3AB3F91A9B6020 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		BCA6F2E21275BDB7AD81713B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				API_BASE_URL = "http://127.0.0.1:8080";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PixelLedger/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.pixelledger;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AE31DAFE881105ED10DD6758 /* Build configuration list for PBXNativeTarget "PixelLedger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BCA6F2E21275BDB7AD81713B /* Debug */,
+				337210F08A579A9C578591E1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AFF4C57199F15A3478DE9226 /* Build configuration list for PBXProject "PixelLedger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				749832A5D1D674E247019304 /* Debug */,
+				B1CC6A908B3AB3F91A9B6020 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3B1D6B4340E4BE801443B570 /* Project object */;
+}
