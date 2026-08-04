@@ -51,6 +51,17 @@ actor APIClient {
         store(result)
         return result
     }
+    func restoreSession() async throws -> LoginResponse {
+        guard let refreshToken else { throw APIError.unauthorized }
+        let result: LoginResponse = try await perform(
+            "auth/refresh",
+            method: "POST",
+            body: RefreshBody(refreshToken: refreshToken),
+            retry: false
+        )
+        store(result)
+        return result
+    }
     func logout() async {
         if let refreshToken {
             do {
@@ -69,9 +80,7 @@ actor APIClient {
         Keychain.remove("refreshToken")
     }
     private func refresh() async throws {
-        guard let refreshToken else { throw APIError.unauthorized }
-        let result: LoginResponse = try await perform("auth/refresh", method: "POST", body: RefreshBody(refreshToken: refreshToken), retry: false)
-        store(result)
+        _ = try await restoreSession()
     }
 
     private func store(_ response: LoginResponse) {

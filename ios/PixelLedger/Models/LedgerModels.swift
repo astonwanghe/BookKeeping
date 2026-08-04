@@ -27,5 +27,5 @@ struct Dashboard: Decodable {
 
 struct CategoryTotal: Decodable, Identifiable { var id: String { name }; let name: String; let icon: String; let amount: Decimal }
 struct Budget: Decodable { let categoryId: Int64?; let amount: Decimal }
-struct User: Decodable { let phone: String }
+struct User: Decodable { let phone: String; let nickname: String? }
 struct LoginResponse: Decodable { let accessToken: String; let refreshToken: String; let user: User }

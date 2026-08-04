@@ -21,6 +21,17 @@ import SwiftUI
         }
     }
 
+    func restoreUserIfNeeded() async {
+        guard isLoggedIn, user == nil else { return }
+        do {
+            user = try await APIClient.shared.restoreSession().user
+        } catch APIError.unauthorized {
+            expireSession()
+        } catch {
+            // 保留当前登录状态，页面可在网络恢复后再次加载用户资料。
+        }
+    }
+
     func logout() {
         user = nil
         isLoggedIn = false
