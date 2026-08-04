@@ -5,4 +5,4 @@
 **/.build/
 backend/.env
 backend/data/
-ios/BookKeeping.xcodeproj/
+ios/PixelLedger.xcodeproj/

@@ -14,7 +14,6 @@ docker rm -f "$NAME" >/dev/null 2>&1 || true
 docker run -d --name "$NAME" --restart unless-stopped \
   --network "$NETWORK" \
   --env-file "$ENV_FILE" \
-  -e SPRING_PROFILES_ACTIVE=prod \
   -e DB_HOST=mysql \
   -e REDIS_HOST=redis \
   -p 127.0.0.1:8080:8080 \

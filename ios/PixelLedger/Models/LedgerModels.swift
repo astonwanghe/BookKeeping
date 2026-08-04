@@ -1,29 +1,23 @@
 import Foundation
 
-enum EntryType: String, Codable, CaseIterable { case INCOME, EXPENSE }
+enum EntryType: String, Decodable { case INCOME, EXPENSE }
 
-struct Category: Codable, Identifiable, Hashable {
+struct Category: Decodable, Identifiable {
     let id: Int64
-    var name: String
+    let name: String
     let type: EntryType
-    var icon: String
-    var sortOrder: Int
-    var active: Bool
 }
 
-struct LedgerTransaction: Codable, Identifiable {
+struct LedgerTransaction: Decodable, Identifiable {
     let id: Int64
     let type: EntryType
     let amount: Decimal
     let occurredOn: String
-    let note: String?
-    let categoryId: Int64
     let categoryName: String
     let categoryIcon: String
 }
 
-struct Dashboard: Codable {
-    let month: String
+struct Dashboard: Decodable {
     let income: Decimal
     let expense: Decimal
     let balance: Decimal
@@ -31,7 +25,7 @@ struct Dashboard: Codable {
     let budgets: [Budget]
 }
 
-struct CategoryTotal: Codable, Identifiable { var id: String { name }; let name: String; let icon: String; let amount: Decimal }
-struct Budget: Codable, Identifiable { let id: Int64; let categoryId: Int64?; let amount: Decimal }
-struct User: Codable { let id: Int64; let phone: String; let email: String; let emailVerified: Bool }
-struct LoginResponse: Codable { let accessToken: String; let refreshToken: String; let user: User }
+struct CategoryTotal: Decodable, Identifiable { var id: String { name }; let name: String; let icon: String; let amount: Decimal }
+struct Budget: Decodable { let categoryId: Int64?; let amount: Decimal }
+struct User: Decodable { let phone: String }
+struct LoginResponse: Decodable { let accessToken: String; let refreshToken: String; let user: User }

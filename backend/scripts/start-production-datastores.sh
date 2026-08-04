@@ -20,7 +20,7 @@ fi
 
 if ! docker container inspect redis >/dev/null 2>&1; then
   docker run -d --name redis --restart unless-stopped \
-    --network "$NETWORK" --env-file "$ENV_FILE" \
+    --network "$NETWORK" \
     -v pixel-ledger-redis-prod-data:/data \
     --health-cmd='redis-cli ping | grep -q PONG' \
     --health-interval=10s --health-timeout=5s --health-retries=12 \

@@ -32,7 +32,6 @@ start_or_run "$MYSQL_CONTAINER" \
 start_or_run "$REDIS_CONTAINER" \
   --restart unless-stopped \
   --network "$NETWORK" \
-  --env-file "$ENV_FILE" \
   -p 127.0.0.1:6379:6379 \
   -v pixel-ledger-redis-local-data:/data \
   --health-cmd='redis-cli ping | grep -q PONG' \

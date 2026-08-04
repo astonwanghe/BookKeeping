@@ -1,7 +1,7 @@
 import Foundation
 
-enum APIError: LocalizedError { case badURL, unauthorized, server(String), decoding
-    var errorDescription: String? { switch self { case .badURL: return "服务器地址无效"; case .unauthorized: return "登录状态已失效"; case .server(let message): return message; case .decoding: return "服务器返回的数据无法读取" } }
+enum APIError: LocalizedError { case unauthorized, server(String), decoding
+    var errorDescription: String? { switch self { case .unauthorized: return "登录状态已失效"; case .server(let message): return message; case .decoding: return "服务器返回的数据无法读取" } }
 }
 
 actor APIClient {
